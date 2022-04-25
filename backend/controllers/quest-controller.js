@@ -1,6 +1,5 @@
 // custom express-async handler
 const asyncHandler = require('express-async-handler');
-const { globalAgent } = require('http');
 
 // functions wrapped in asyncHandler to help with trycatch/asyncawait bs
 
@@ -11,7 +10,7 @@ const Quest = require('../models/quest-model');
 // @access  Private, because user should only see relevant quests
 const getQuests = asyncHandler(async (req, res) => {
     // going through database and collecting all of the quests
-    const quests = await Quest.find();
+    const quests = await Quest.find({ user: req.user.id });
     
     // returing ok status and sending all of the quests we found in database
     res.status(200).json(quests);

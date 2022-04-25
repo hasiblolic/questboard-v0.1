@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 
+// protect routes middleware
+const { protect } = require('../middleware/auth');
+
 // importing controller functions
 const { 
     getQuests,
@@ -11,13 +14,13 @@ const {
 
 // routes for getting and creating quests
 router.route('/')
-    .get(getQuests)
-    .post(createQuest);
+    .get(protect, getQuests)
+    .post(protect, createQuest);
 
 // routes for deleting and updating quests based on id entered as param
 router.route('/:id')
-    .put(updateQuest)
-    .delete(deleteQuest)
+    .put(protect, updateQuest)
+    .delete(protect, deleteQuest)
 
 
 module.exports = router;

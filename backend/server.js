@@ -20,6 +20,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 
 // routes
+app.use('/api/users', require('./routes/user-routes'));
 app.use('/api/quests', require('./routes/quest-routes'));
 
 // custom error handling
