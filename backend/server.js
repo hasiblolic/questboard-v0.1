@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const colors = require('colors');
 const dotenv = require('dotenv').config();
 
@@ -18,10 +19,12 @@ const app = express();
 // adding in middleware to enable json status responses instead of standard html
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
+app.use(cors());
 
 // routes
 app.use('/api/users', require('./routes/user-routes'));
 app.use('/api/quests', require('./routes/quest-routes'));
+app.use('/api/fields', require('./routes/field-routes'));
 
 // custom error handling
 app.use(errorHandler);

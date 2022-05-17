@@ -46,7 +46,7 @@ const register = asyncHandler(async (req, res) => {
     }
 
     // check if user exists already
-    const userExists = User.findOne({ email });
+    const userExists = await User.findOne({ email });
 
     if(userExists) {
         res.status(400);
@@ -55,7 +55,7 @@ const register = asyncHandler(async (req, res) => {
 
     // user not found and all fields filled out so go ahead and create a new user
     // starting by hashing password - create salt first
-    const salt = bcrypt.genSalt(10);
+    const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
     // create user
@@ -63,7 +63,6 @@ const register = asyncHandler(async (req, res) => {
         name,
         email,
         password: hashedPassword,
-        token: generateJWT(user._id),
     });
 
     // verify user was successfully created and respond with 201
@@ -71,7 +70,8 @@ const register = asyncHandler(async (req, res) => {
         res.status(201).json({
             _id: user.id,
             name: user.name,
-            email: user.email
+            email: user.email,
+            token: generateJWT(user._id)
         });
     } else {
         res.status(400);
@@ -83,18 +83,16 @@ const register = asyncHandler(async (req, res) => {
 // @route   GET /api/users/profile
 // @access  Private, because only the user should be able to see their information
 const profile = asyncHandler(async (req, res) => {
-    const { _id, name, email } = await User.findById(req.user.id);
-
-    res.status(200).json({
-        id: _id,
-        name,
-        email,
-    })
+    res.status(200).json(req.user)
 });
 
 // Generate JWT
 const generateJWT = (id) => {
-    return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '30d'})
+    return jwt.sign(
+        { id }, 
+        process.env.JWT_SECRET,
+        { expiresIn: '30d' }
+    )
 }
 
 module.exports = {

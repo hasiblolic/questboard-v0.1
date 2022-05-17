@@ -6,21 +6,21 @@ const { protect } = require('../middleware/auth');
 
 // importing controller functions
 const {
-    getQuests,
-    createQuest,
-    updateQuest,
-    deleteQuest
-} = require('../controllers/quest-controller');
+    getFields,
+    createField,
+    updateField,
+    deleteField
+} = require('../controllers/field-controller');
 
 // routes for getting and creating quests
 router.route('/')
-    .get(protect, getQuests)
-    .post(protect, createQuest);
+    .get(protect, getFields)
+    .post(protect, createField);
 
 // routes for deleting and updating quests based on id entered as param
 router.route('/:id')
-    .put(protect, updateQuest)
-    .delete(protect, deleteQuest)
+    .put(protect, updateField)
+    .delete(protect, deleteField)
 
 
 module.exports = router;
