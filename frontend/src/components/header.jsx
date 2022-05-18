@@ -29,19 +29,27 @@ function Header() {
               // If user is logged in, display appropriate buttons
               user ? <>
                 <li className='nav-item'>
-                  <button className='btn btn-outline-primary'>
-                    <FaUser /> Profile
-                  </button>
+                    <Link className='nav-link' to='/profile'>
+                      <FaUser /> Profile
+                    </Link>
                 </li>
                 <li className='nav-item'>
-                  <button className='btn btn-outline-primary' onClick={onLogout}>
-                    <FaSignOutAlt /> Logout
-                  </button>
+                    <Link className='nav-link' to='/login'>
+                      <FaSignOutAlt /> Logout
+                    </Link>
                 </li>
               </> : <>
                 {/* User not logged in so display login and register buttons  */}
-                <li className='nav-item'><Link className='nav-link' to='/login' ><FaSignInAlt /> Login</Link></li>
-                <li className='nav-item'><Link className='nav-link' to='/register' ><FaUser /> Register</Link></li>
+                <li className='nav-item'>
+                  <Link className='nav-link' to='/login' >
+                    <FaSignInAlt /> Login
+                  </Link>
+                  </li>
+                <li className='nav-item'>
+                  <Link className='nav-link' to='/register' >
+                    <FaUser /> Register
+                  </Link>
+                </li>
               </>
             }
           </ul>
