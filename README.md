@@ -1,16 +1,19 @@
 # Questboard
 
-App to create groups or families and create quests. Theses quests serve as a task tracker and allow people to complete quests for rewards. Have lazy kids? Give them quests to complete for their allowance.
+App to create quests for parties or individuals. Theses quests serve as a task to complete and allow people to collect rewards. 
+Have kids? Give them quests to complete for their allowance.
+Have employees and you need to get certain tasks done for that next project? Give them quests and allow them to earn rewards.
+The possibilities are endless.
 
-###### Progress
+##### Progress
 Backend API functioning with crud capabilities. Will add onto it as project scales.
 Frontend has basics laid out to use the backend api.
-Next steps include creating profile page as well as family/groups to create interconnectivity
+Next steps include creating profile page as well as parties to create interconnectivity.
 
-# How to use/copy
+### How to use/copy
 Copy/download code and install using npm. Front end and backend have seperate dependencies
 
-# License
+### License
 MIT License
 
 Copyright (c) 2022 Hasib Lolic
