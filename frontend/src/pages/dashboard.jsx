@@ -1,46 +1,37 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-
-import { reset } from '../features/quests/quest-slice';
-
-// this form lets you create a new quest
+import { toast } from 'react-toastify';
 import QuestForm from '../components/quests/quest-form';
 import Spinner from '../components/spinner';
 import DisplayQuests from '../components/quests/display-quests';
 
-function Dashboard() {
+export default function Dashboard() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const { user, isError, message, isLoading } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    if(isError) {
-      // console log the error message we receive and reset state on unmount
-      console.log(message);
-      return () => { dispatch(reset()) }
-    }
-   
     // if no user is found - (no token) - go back to login because unauthorized
     if(!user) {
       navigate('/login');
-      return () => {
-        // after navigating to /login and component unmounts we will reset the state
-        dispatch(reset());
-      }
     }
-
-    // cleanup function - component unmounts and resets the state
-    return () => {
-      dispatch(reset());
-    };
+    
+    if (isError) {
+      toast.error(message);
+    }
 
   }, [user, navigate, isError, message, dispatch]);
     
   // if the page is loading, display the loading spinner
-  if(isLoading === true) return <Spinner />
+  if(isLoading === true) {
+    return <Spinner />
+  }
 
+  // if no user present don't bother trying to render anything, useEffect will navigate to login
+  if(!user) return;
+  
   return (
     <>
       <section className='text-center'>
@@ -57,7 +48,5 @@ function Dashboard() {
         <DisplayQuests />
       </section>
     </>
-  )
+  );
 }
-
-export default Dashboard;

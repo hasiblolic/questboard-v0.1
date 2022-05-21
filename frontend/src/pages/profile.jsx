@@ -23,6 +23,8 @@ function Profile() {
   // if the page is loading, display the loading spinner
   if(isLoading === true) return <Spinner />
 
+  if(!user) return;
+  
   return (
     <>
       <div className='container'>

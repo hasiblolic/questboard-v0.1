@@ -5,10 +5,11 @@ import { store } from './app/store';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
-// CSS imports
-import 'bootstrap/dist/css/bootstrap.css';
-import 'bootstrap/dist/js/bootstrap';
-//import './index.css';
+// roboto font
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
 
 const container = document.getElementById('root');
 const root = createRoot(container);

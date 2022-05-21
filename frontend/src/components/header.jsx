@@ -1,6 +1,4 @@
-import { FaSignInAlt, FaSignOutAlt, FaUser } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
-
 import { useSelector, useDispatch } from 'react-redux';
 import { logout, reset } from '../features/auth/auth-slice';
 
@@ -13,7 +11,7 @@ function Header() {
   const onLogout = () => {
     dispatch(logout());
     dispatch(reset());
-    navigate('/');
+    navigate('/login');
   }
 
   return (
@@ -30,42 +28,30 @@ function Header() {
               user ? <>
                 <li className='nav-item'>
                     <Link className='nav-link' to='/profile'>
-                      <FaUser /> Profile
+                      Profile
                     </Link>
                 </li>
                 <li className='nav-item'>
-                    <Link className='nav-link' to='/login'>
-                      <FaSignOutAlt /> Logout
+                    <Link className='nav-link' onClick={onLogout} to='/login'>
+                      Logout
                     </Link>
                 </li>
               </> : <>
                 {/* User not logged in so display login and register buttons  */}
                 <li className='nav-item'>
                   <Link className='nav-link' to='/login' >
-                    <FaSignInAlt /> Login
+                    Login
                   </Link>
                   </li>
                 <li className='nav-item'>
                   <Link className='nav-link' to='/register' >
-                    <FaUser /> Register
+                    Register
                   </Link>
                 </li>
               </>
             }
           </ul>
         </div>
-        { user ? 
-        // user logged in so show logout button as well as profile
-        (
-          <ul className='navbar-nav'>
-            
-          </ul>
-        ) : //else show login/register
-        (
-          <ul className='navbar-nav'>
-            
-          </ul>
-        )}
       </div>
     </nav>
   )

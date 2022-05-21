@@ -1,84 +1,71 @@
 import { useState } from 'react';
-import { FaEdit, FaTrash } from 'react-icons/fa';
 import { useDispatch } from 'react-redux';
+import IconButton from '@mui/material/IconButton';
+import DeleteIcon from '@mui/icons-material/Delete';
+import CheckMarkOutline from '@mui/icons-material/CheckCircleOutline';
+import CheckMark from '@mui/icons-material/CheckCircle';
+import Checkbox from '@mui/material/Checkbox';
 
-import { deleteQuest, getQuests, reset, updateQuest } from '../../features/quests/quest-slice';
+import { deleteQuest, updateQuest } from '../../features/quests/quest-slice';
+import { TableCell, TableRow, Typography } from '@mui/material';
 
-function QuestItem(props) {
+export default function QuestItem(props) {
   const dispatch = useDispatch();
 
-  const [questState, setQuestState] = useState({
-    ...props.quest,
-    due: new Date(props.quest.due).toISOString().split('T')[0],
-  });
+  const [questState, setQuestState] = useState(props.quest);
 
-  const handleChange = (e) => {
+  // handle change function - whenever something is changed in the input fields, this gets reflected onto the state (questState)
+  const handleChange = (event) => {
     setQuestState((prevState) => ({
       ...prevState,
-      [e.target.name]: e.target.value,
-    }))
+      [event.target.name]: event.target.name === 'completion' ? event.target.checked : event.target.value,
+    }));
   }
 
-  const handleCompletion = (e) => {
-    setQuestState((prevState) => ({
-      ...prevState,
-      completion: !prevState.completion,
-    }))
+  // whenever user leaves the input, dispatch an update
+  const handleBlur = (event) => {
+    dispatch(updateQuest(questState));
   }
 
+  // sends a dispatch to delete quest
   const handleDelete = () => {
     dispatch(deleteQuest(questState._id));
   }
 
-  const confirmChange = () => {
-    dispatch(updateQuest(questState));
-  }
-
   return (
-    <tr>
-      <td>
-        <input 
-          type='checkbox'
-          className='form-check-input'
+    <TableRow
+      key={questState._id}
+      hover
+    >
+      <TableCell>
+        <Checkbox
+          icon={<CheckMarkOutline />}
+          checkedIcon={<CheckMark />}
           name='completion'
-          value={questState.completion}
           checked={questState.completion}
-          onChange={handleCompletion}
-        />
-      </td>
-      <td>
-        <input 
-          type='text'
-          className='form-control'
-          name='title'
-          value={questState.title}
           onChange={handleChange}
         />
-      </td>
-      <td>
-        <input 
-          type='date'
-          className='form-control'
-          name='due'
-          value={questState.due}
-          onChange={handleChange}
-        />
-      </td>
-      <td>
-        <input 
-          type='text' 
-          className='form-control'
-          name='description'
-          value={questState.description}
-          onChange={handleChange}
-        />
-      </td>
-      <td>
-        <button className='btn btn-outline' onClick={confirmChange}><FaEdit/></button>
-        <button className='btn btn-outline' onClick={handleDelete}><FaTrash /></button>
-      </td>
-    </tr>
+      </TableCell>
+      <TableCell>
+        <Typography variant='body1'>
+          {questState.title}
+        </Typography>
+      </TableCell>
+      <TableCell>
+        <Typography variant='body1'>
+          {new Date(questState.due).toISOString().split('T')[0]}
+        </Typography>
+      </TableCell>
+      <TableCell>
+        <Typography variant='body1'>
+          {questState.description}
+        </Typography>
+      </TableCell>
+      <TableCell>
+        <IconButton aria-label='delete' onClick={handleDelete}>
+          <DeleteIcon />
+        </IconButton>
+      </TableCell>
+    </TableRow>
   )
 }
-  
-export default QuestItem;
