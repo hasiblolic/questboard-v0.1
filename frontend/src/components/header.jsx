@@ -1,17 +1,17 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { logout, reset } from '../features/auth/auth-slice';
+import { signout, reset } from '../features/auth/auth-slice';
 
-function Header() {
+export default function Header() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
 
 
-  const onLogout = () => {
-    dispatch(logout());
+  const onSignout = () => {
+    dispatch(signout());
     dispatch(reset());
-    navigate('/login');
+    navigate('/signin');
   }
 
   return (
@@ -32,20 +32,20 @@ function Header() {
                     </Link>
                 </li>
                 <li className='nav-item'>
-                    <Link className='nav-link' onClick={onLogout} to='/login'>
-                      Logout
+                    <Link className='nav-link' onClick={onSignout} to='/signin'>
+                      signout
                     </Link>
                 </li>
               </> : <>
-                {/* User not logged in so display login and register buttons  */}
+                {/* User not logged in so display signin and signup buttons  */}
                 <li className='nav-item'>
-                  <Link className='nav-link' to='/login' >
-                    Login
+                  <Link className='nav-link' to='/signin' >
+                    Sign In
                   </Link>
                   </li>
                 <li className='nav-item'>
-                  <Link className='nav-link' to='/register' >
-                    Register
+                  <Link className='nav-link' to='/signup' >
+                    Sign Up
                   </Link>
                 </li>
               </>
@@ -56,5 +56,3 @@ function Header() {
     </nav>
   )
 }
-
-export default Header

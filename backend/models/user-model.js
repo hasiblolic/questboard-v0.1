@@ -10,10 +10,22 @@ const userSchema = mongoose.Schema({
         type: String,
         required: [true, 'Please enter a password'],
     },
-    name: {
+    displayName: {
         type: String,
-        required: [true, 'Please enter a name'],
-    }
+        required: [true, 'Please enter your first name'],
+    },
+    emailVerified: {
+      type: Boolean,
+      default: false,
+    },
+    phoneNumber: {
+      type: Number,
+      required: false,
+    },
+    photoURL: {
+      type: String,
+      required: false,
+    },
 }, {
     timestamps: true,
 });

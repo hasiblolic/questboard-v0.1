@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { login, reset } from '../features/auth/auth-slice';
+import { signin, reset } from '../features/auth/auth-slice';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -16,6 +16,8 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { auth, provider } from '../firebase';
+import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 
 function Copyright(props) {
   return (
@@ -31,6 +33,28 @@ function Copyright(props) {
 }
 
 const theme = createTheme();
+
+const signInWithGoogle = () => {
+  signInWithPopup(auth, provider)
+    .then((result) => {
+      // This gives you a Google Access Token. You can use it to access the Google API.
+      const credential = GoogleAuthProvider.credentialFromResult(result);
+      const token = credential.accessToken;
+      // The signed-in user info.
+      const user = result.user;
+      // ...
+      console.log(user);
+    }).catch((error) => {
+      // Handle Errors here.
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      // The email of the user's account used.
+      const email = error.customData.email;
+      // The AuthCredential type that was used.
+      const credential = GoogleAuthProvider.credentialFromError(error);
+      // ...
+    });
+}
 
 export default function SignIn() {
   const navigate = useNavigate()
@@ -59,7 +83,7 @@ export default function SignIn() {
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    dispatch(login({
+    dispatch(signin({
       email: data.get('email'),
       password: data.get('password'),
     }));
@@ -104,10 +128,6 @@ export default function SignIn() {
               id='password'
               autoComplete='current-password'
             />
-            <FormControlLabel
-              control={<Checkbox value='remember' color='primary' />}
-              label='Remember me'
-            />
             <Button
               type='submit'
               fullWidth
@@ -116,6 +136,14 @@ export default function SignIn() {
             >
               Sign In
             </Button>
+            <Button
+              fullWidth
+              variant='contained'
+              sx={{ mt: 3, mb: 2 }}
+              onClick={signInWithGoogle}
+            >
+              Sign In With Google
+            </Button>
             <Grid container>
               <Grid item xs>
                 <Link href='#' variant='body2'>
@@ -123,7 +151,7 @@ export default function SignIn() {
                 </Link>
               </Grid>
               <Grid item>
-                <Link href='#' variant='body2'>
+                <Link href='/signup' variant='body2'>
                   {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>

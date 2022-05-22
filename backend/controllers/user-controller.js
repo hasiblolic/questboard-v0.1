@@ -6,9 +6,9 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/user-model');
 
 // @desc    Authenticate a user
-// @route   POST /api/users/login
+// @route   POST /api/users/signin
 // @access  Public
-const login = asyncHandler(async (req, res) => {
+const signin = asyncHandler(async (req, res) => {
     // pulling out email and password from request
     const { email, password } = req.body;
 
@@ -23,7 +23,8 @@ const login = asyncHandler(async (req, res) => {
     if(user && (await bcrypt.compare(password, user.password))) {
         res.json({
             _id: user.id,
-            name: user.name,
+            firstName: user.firstName,
+            lastName: user.lastName,
             email: user.email,
             token: generateJWT(user._id),
         });
@@ -34,10 +35,10 @@ const login = asyncHandler(async (req, res) => {
 });
 
 // @desc    create a new user
-// @route   POST /api/users/register
+// @route   POST /api/users/signup
 // @access  Public
-const register = asyncHandler(async (req, res) => {
-    const { email, password, name } = req.body;
+const signup = asyncHandler(async (req, res) => {
+    const { email, password, firstName, lastName } = req.body;
 
     // validate that all fields are filled out
     if(!email || !password) {
@@ -50,7 +51,7 @@ const register = asyncHandler(async (req, res) => {
 
     if(userExists) {
         res.status(400);
-        throw new Error('User already registered, did you want to login?');
+        throw new Error('User already registered, did you want to sign in?');
     }
 
     // user not found and all fields filled out so go ahead and create a new user
@@ -60,7 +61,8 @@ const register = asyncHandler(async (req, res) => {
 
     // create user
     const user = await User.create({
-        name,
+        firstName,
+        lastName,
         email,
         password: hashedPassword,
     });
@@ -69,7 +71,8 @@ const register = asyncHandler(async (req, res) => {
     if(user) {
         res.status(201).json({
             _id: user.id,
-            name: user.name,
+            firstName: user.firstName,
+            lastName: user.lastName,
             email: user.email,
             token: generateJWT(user._id)
         });
@@ -96,7 +99,7 @@ const generateJWT = (id) => {
 }
 
 module.exports = {
-    login,
-    register,
+    signin,
+    signup,
     profile
 };

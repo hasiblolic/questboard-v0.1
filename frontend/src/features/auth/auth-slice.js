@@ -12,29 +12,29 @@ const initialState = {
     message: '',
 }
 
-// register user
-export const register = createAsyncThunk('auth/register', async(user, thunkAPI) => {
+// signup user
+export const signup = createAsyncThunk('auth/signup', async(user, thunkAPI) => {
   try {
-    return await authService.register(user);
+    return await authService.signup(user);
   } catch (error) {
     const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString();
     return thunkAPI.rejectWithValue(message);
   }
 });
 
-// login user
-export const login = createAsyncThunk('auth/login', async(user, thunkAPI) => {
+// signin user
+export const signin = createAsyncThunk('auth/signin', async(user, thunkAPI) => {
   try {
-    return await authService.login(user);
+    return await authService.signin(user);
   } catch (error) {
     const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString();
     return thunkAPI.rejectWithValue(message);
   }
 });
 
-export const logout = createAsyncThunk('auth/logout', async (thunkAPI) => {
+export const signout = createAsyncThunk('auth/signout', async (thunkAPI) => {
   try {
-    await authService.logout();
+    await authService.signout();
   } catch (error) {
     const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString();
     return thunkAPI.rejectWithValue(message);
@@ -54,17 +54,17 @@ export const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(register.pending, (state) => {
+      .addCase(signup.pending, (state) => {
           // decide what to do with state while pending
           state.isLoading = true;
       })
-      .addCase(register.fulfilled, (state, action) => {
+      .addCase(signup.fulfilled, (state, action) => {
           state.isLoading = false;
           state.isSuccess = true;
-          // payload gets returned up above in the register function
+          // payload gets returned up above in the signup function
           state.user = action.payload;
       })
-      .addCase(register.rejected, (state, action) => {
+      .addCase(signup.rejected, (state, action) => {
           state.isLoading = false;
           state.isError = true;
           // gets returned up above with the thunkAPI.rejectWithValue
@@ -72,17 +72,17 @@ export const authSlice = createSlice({
           // something went wrong so setting user to null
           state.user = null;
       })
-      .addCase(login.pending, (state) => {
+      .addCase(signin.pending, (state) => {
           // decide what to do with state while pending
           state.isLoading = true;
       })
-      .addCase(login.fulfilled, (state, action) => {
+      .addCase(signin.fulfilled, (state, action) => {
           state.isLoading = false;
           state.isSuccess = true;
-          // payload gets returned up above in the login function
+          // payload gets returned up above in the signin function
           state.user = action.payload;
       })
-      .addCase(login.rejected, (state, action) => {
+      .addCase(signin.rejected, (state, action) => {
           state.isLoading = false;
           state.isError = true;
           // gets returned up above with the thunkAPI.rejectWithValue
@@ -90,7 +90,7 @@ export const authSlice = createSlice({
           // something went wrong so setting user to null
           state.user = null;
       })
-      .addCase(logout.fulfilled, (state) => {
+      .addCase(signout.fulfilled, (state) => {
           state.user = null;
       })
   }

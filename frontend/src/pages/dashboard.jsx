@@ -15,7 +15,7 @@ export default function Dashboard() {
   useEffect(() => {
     // if no user is found - (no token) - go back to login because unauthorized
     if(!user) {
-      navigate('/login');
+      navigate('/signin');
     }
     
     if (isError) {
