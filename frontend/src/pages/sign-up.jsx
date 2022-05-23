@@ -2,10 +2,13 @@ import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { signup, reset } from '../features/auth/auth-slice';
+import { signup, reset, signupWithGoogle } from '../features/auth/auth-slice';
 import Spinner from '../components/spinner';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import { Avatar, Box, Button, Checkbox, Container, createTheme, CssBaseline, FormControlLabel, Grid, Link, TextField, ThemeProvider, Typography } from '@mui/material';
+import GoogleIcon from '@mui/icons-material/Google';
+import { Avatar, Box, Button, Container, createTheme, CssBaseline, Grid, Link, TextField, ThemeProvider, Typography } from '@mui/material';
+import { auth, provider } from '../firebase';
+import { GoogleAuthProvider, signInWithPopup, signInWithRedirect } from 'firebase/auth';
 
 function Copyright(props) {
   return (
@@ -24,13 +27,13 @@ const theme = createTheme();
 
 export default function Signup() {
   const [formData, setFormData] = useState({
-    name: '',
+    displayName: '',
     email: '',
     password: '',
     password2: '',
   })
 
-  const { name, email, password, password2 } = formData
+  const { displayName, email, password, password2 } = formData
 
   const navigate = useNavigate()
   const dispatch = useDispatch()
@@ -51,27 +54,42 @@ export default function Signup() {
     dispatch(reset())
   }, [user, isError, isSuccess, message, navigate, dispatch])
 
-  const onChange = (e) => {
-    setFormData((prevState) => ({
-      ...prevState,
-      [e.target.name]: e.target.value,
-    }))
-  }
-
-  const handleSubmit = (e) => {
-    e.preventDefault()
+  const handleSubmit = (event) => {
+    event.preventDefault()
 
     if (password !== password2) {
       toast.error('Passwords do not match')
     } else {
-      const userData = {
-        name,
-        email,
-        password,
-      }
-
-      dispatch(signup(userData))
+      const data = new FormData(event.currentTarget);
+      
+      dispatch(signup({
+        displayName: data.get('displayName'),
+        email: data.get('email'),
+        password: data.get('password'),
+      }))
     }
+  }
+
+  const googleAuth = () => {
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+        // The signed-in user info.
+        const user = result.user;
+        // ...
+        dispatch(signupWithGoogle(user));
+      }).catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // The email of the user's account used.
+        const email = error.customData.email;
+        // The AuthCredential type that was used.
+        const credential = GoogleAuthProvider.credentialFromError(error);
+        // ...
+      });
   }
 
   if (isLoading) {
@@ -98,25 +116,14 @@ export default function Signup() {
           </Typography>
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={12}>
                 <TextField
-                  autoComplete="given-name"
-                  name="name"
+                  name="displayName"
                   required
                   fullWidth
-                  id="firstName"
-                  label="First Name"
+                  id="displayName"
+                  label="Display Name"
                   autoFocus
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  id="lastName"
-                  label="Last Name"
-                  name="lastName"
-                  autoComplete="family-name"
                 />
               </Grid>
               <Grid item xs={12}>
@@ -159,6 +166,15 @@ export default function Signup() {
               sx={{ mt: 3, mb: 2 }}
             >
               Sign Up
+            </Button>
+            <Button
+              fullWidth
+              variant='contained'
+              sx={{ mt: 3, mb: 2 }}
+              onClick={googleAuth}
+              startIcon={<GoogleIcon />}
+            >
+              Sign Up With Google
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>

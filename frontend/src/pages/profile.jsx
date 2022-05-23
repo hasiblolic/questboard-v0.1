@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 
 // this form lets you create a new quest
 import Spinner from '../components/spinner';
+import { toast } from 'react-toastify';
 
 function Profile() {
   const navigate = useNavigate();
@@ -12,6 +13,9 @@ function Profile() {
   const { user, isError, message, isLoading } = useSelector((state) => state.auth);
 
   useEffect(() => {
+    if(isError) {
+      toast.error(message);
+    }
    
     // if no user is found - (no token) - go back to login because unauthorized
     if(!user) {
@@ -30,10 +34,10 @@ function Profile() {
       <div className='container'>
         <div className='row'>
           <div className='col-md'>
-            <h4>Woah Dude!</h4>
+            <h4>Woah, {user.displayName} is in the house!</h4>
           </div>
           <div className='col-md'>
-            <h4>Awesome</h4>
+            <h4>Awesome!</h4>
           </div>
         </div>
       </div>

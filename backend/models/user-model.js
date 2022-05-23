@@ -8,11 +8,11 @@ const userSchema = mongoose.Schema({
     },
     password: {
         type: String,
-        required: [true, 'Please enter a password'],
+        required: false,
     },
     displayName: {
         type: String,
-        required: [true, 'Please enter your first name'],
+        required: [true, 'Please enter your display name'],
     },
     emailVerified: {
       type: Boolean,

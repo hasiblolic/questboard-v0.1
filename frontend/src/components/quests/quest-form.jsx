@@ -1,8 +1,9 @@
+import { Box, Button, Grid, Stack, TextField } from '@mui/material';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { createQuest } from '../../features/quests/quest-slice';
 
-function QuestForm(props) {
+export default function QuestForm(props) {
   const dispatch = useDispatch();
 
   const [questFormData, setQuestFormData] = useState({
@@ -12,14 +13,14 @@ function QuestForm(props) {
   });
 
   // on change events for quest form
-  const onChangeQuestForm = (e) => {
+  const handleChange = (e) => {
     setQuestFormData((prevState) => ({
       ...prevState,
       [e.target.name]: e.target.value,
     }))
   }
 
-  const onSubmit = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     // dispatching action to create a new quest, which will add onto database and reset the state
     dispatch(createQuest({
@@ -31,45 +32,43 @@ function QuestForm(props) {
   };
 
   return (
-    <form onSubmit={onSubmit}>
-      {/* FORM INPUT FOR QUEST TITLE */}
-        <div className='mb-3'>
-          <input
-            type='text'
-            className='form-control'
-            name='title'
-            placeholder='...'
-            value={questFormData.title}
-            onChange={onChangeQuestForm}
-          />
-        </div>
-      {/* FORM INOUT FOR DESCRIPTION */}
-        <div className='mb-3'>
-          <input
-            type='text'
-            className='form-control'
-            name='description'
-            placeholder='...'
-            value={questFormData.description}
-            onChange={onChangeQuestForm}
-          />
-        </div>
-      {/* FORM INPUT FOR DUE DATE */}
-        <div className='mb-3'>
-          <input
-            type='date'
-            className='form-control'
-            name='due'
-            value={questFormData.due}
-            onChange={onChangeQuestForm}
-          />
-        </div>
+    <Box
+      component='form'
+      onSubmit={handleSubmit}
+      noValidate
+      autoComplete='off'
+    >
+      <Stack direction='row' spacing={2} justifyContent='space-evenly'>
+        {/* FORM INPUT FOR QUEST TITLE */}
+        <TextField
+          name='title'
+          label='Title'
+          fullWidth
+          value={questFormData.title}
+          onChange={handleChange}
+        />
+        {/* FORM INOUT FOR DESCRIPTION */}
+        <TextField
+          name='description'
+          label='Description'
+          fullWidth
+          value={questFormData.description}
+          onChange={handleChange}
+        />
+        {/* FORM INPUT FOR DUE DATE */}
+        <TextField 
+          name='due'
+          type='date'
+          label='Due Date'
+          fullWidth
+          value={new Date(questFormData.due).toISOString().split('T')[0]}
+          onChange={handleChange}
+        />
+      </Stack>
+      <Stack sx={{ marginTop: 2, marginBottom: 2 }} direction='column' spacing={2} justifyContent='space-evenly'>
+        <Button variant='outlined' type='submit'>Submit New Quest</Button>
+      </Stack>
       
-        <button type='submit' className='btn btn-outline-success'>Submit New Quest</button>
-            
-      
-    </form>
+    </Box>
   )
 }
-  
-export default QuestForm;

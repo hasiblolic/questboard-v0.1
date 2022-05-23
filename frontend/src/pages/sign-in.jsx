@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { signin, reset } from '../features/auth/auth-slice';
+import { signin, reset, signinWithGoogle } from '../features/auth/auth-slice';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -15,9 +15,10 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import GoogleIcon from '@mui/icons-material/Google'
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { auth, provider } from '../firebase';
-import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import { signInWithPopup, GoogleAuthProvider, signInWithRedirect } from 'firebase/auth';
 
 function Copyright(props) {
   return (
@@ -34,27 +35,7 @@ function Copyright(props) {
 
 const theme = createTheme();
 
-const signInWithGoogle = () => {
-  signInWithPopup(auth, provider)
-    .then((result) => {
-      // This gives you a Google Access Token. You can use it to access the Google API.
-      const credential = GoogleAuthProvider.credentialFromResult(result);
-      const token = credential.accessToken;
-      // The signed-in user info.
-      const user = result.user;
-      // ...
-      console.log(user);
-    }).catch((error) => {
-      // Handle Errors here.
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      // The email of the user's account used.
-      const email = error.customData.email;
-      // The AuthCredential type that was used.
-      const credential = GoogleAuthProvider.credentialFromError(error);
-      // ...
-    });
-}
+
 
 export default function SignIn() {
   const navigate = useNavigate()
@@ -78,6 +59,28 @@ export default function SignIn() {
 
     dispatch(reset())
   }, [user, isError, isSuccess, message, navigate, dispatch]);
+
+  const googleAuth = () => {
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+        // The signed-in user info.
+        const user = result.user;
+        // ...
+        dispatch(signinWithGoogle(user));
+      }).catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // The email of the user's account used.
+        const email = error.customData.email;
+        // The AuthCredential type that was used.
+        const credential = GoogleAuthProvider.credentialFromError(error);
+        // ...
+      });
+  }
 
 
   const handleSubmit = (event) => {
@@ -140,7 +143,8 @@ export default function SignIn() {
               fullWidth
               variant='contained'
               sx={{ mt: 3, mb: 2 }}
-              onClick={signInWithGoogle}
+              onClick={googleAuth}
+              startIcon={<GoogleIcon />}
             >
               Sign In With Google
             </Button>

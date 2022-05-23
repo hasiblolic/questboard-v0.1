@@ -13,9 +13,14 @@ const signin = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
 
     // doing some validation
-    if(!email || !password) {
+    if(!email) {
         res.status(400);
-        throw new Error('Please enter all fields');
+        throw new Error('Please enter your email');
+    }
+
+    if(!password) {
+      res.status(400);
+      throw new Error('Please enter your password');
     }
 
     const user = await User.findOne({ email });
@@ -23,8 +28,7 @@ const signin = asyncHandler(async (req, res) => {
     if(user && (await bcrypt.compare(password, user.password))) {
         res.json({
             _id: user.id,
-            firstName: user.firstName,
-            lastName: user.lastName,
+            displayName: user.displayName,
             email: user.email,
             token: generateJWT(user._id),
         });
@@ -34,11 +38,31 @@ const signin = asyncHandler(async (req, res) => {
     }
 });
 
+const signinWithGoogle = asyncHandler(async (req, res) => {
+  // pulling out email and password from request
+  const { email } = req.body;
+
+  const user = await User.findOne({ email });
+
+  if(user) {
+    res.json({
+      _id: user.id,
+      displayName: user.displayName,
+      email: user.email,
+      token: generateJWT(user._id),
+    });
+  } else {
+    res.status(400);
+    throw new Error('Your acount could not be found, did you want to sign up?');
+  }
+});
+
+
 // @desc    create a new user
 // @route   POST /api/users/signup
 // @access  Public
 const signup = asyncHandler(async (req, res) => {
-    const { email, password, firstName, lastName } = req.body;
+    const { email, password, displayName } = req.body;
 
     // validate that all fields are filled out
     if(!email || !password) {
@@ -61,8 +85,7 @@ const signup = asyncHandler(async (req, res) => {
 
     // create user
     const user = await User.create({
-        firstName,
-        lastName,
+        displayName,
         email,
         password: hashedPassword,
     });
@@ -71,8 +94,7 @@ const signup = asyncHandler(async (req, res) => {
     if(user) {
         res.status(201).json({
             _id: user.id,
-            firstName: user.firstName,
-            lastName: user.lastName,
+            displayName: user.displayName,
             email: user.email,
             token: generateJWT(user._id)
         });
@@ -80,6 +102,47 @@ const signup = asyncHandler(async (req, res) => {
         res.status(400);
         throw new Error('Invalid user data');
     }
+});
+
+// @desc    create a new user
+// @route   POST /api/users/signup
+// @access  Public
+const signupWithGoogle = asyncHandler(async (req, res) => {
+  const { email, displayName } = req.body;
+
+  // validate that all fields are filled out
+  if(!email) {
+      res.status(400);
+      throw new Error('Missing email');
+  }
+
+  // check if user exists already
+  const userExists = await User.findOne({ email });
+
+  if(userExists) {
+      res.status(400);
+      throw new Error('User already registered, did you want to sign in?');
+  }
+
+  // existing user not found and all fields filled out so go ahead and create a new user
+  // create user
+  const user = await User.create({
+      displayName,
+      email,
+  });
+
+  // verify user was successfully created and respond with 201
+  if(user) {
+      res.status(201).json({
+          _id: user.id,
+          displayName: user.displayName,
+          email: user.email,
+          token: generateJWT(user._id)
+      });
+  } else {
+      res.status(400);
+      throw new Error('Invalid user data');
+  }
 });
 
 // @desc    see user's specific information/profile
@@ -101,5 +164,7 @@ const generateJWT = (id) => {
 module.exports = {
     signin,
     signup,
+    signinWithGoogle,
+    signupWithGoogle,
     profile
 };

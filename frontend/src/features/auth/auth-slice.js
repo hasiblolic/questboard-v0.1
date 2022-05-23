@@ -22,10 +22,30 @@ export const signup = createAsyncThunk('auth/signup', async(user, thunkAPI) => {
   }
 });
 
+// signup user
+export const signupWithGoogle = createAsyncThunk('auth/signup-with-google', async(user, thunkAPI) => {
+  try {
+    return await authService.signupWithGoogle(user);
+  } catch (error) {
+    const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString();
+    return thunkAPI.rejectWithValue(message);
+  }
+});
+
 // signin user
 export const signin = createAsyncThunk('auth/signin', async(user, thunkAPI) => {
   try {
     return await authService.signin(user);
+  } catch (error) {
+    const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString();
+    return thunkAPI.rejectWithValue(message);
+  }
+});
+
+// signin user
+export const signinWithGoogle = createAsyncThunk('auth/signin-with-google', async(user, thunkAPI) => {
+  try {
+    return await authService.signinWithGoogle(user);
   } catch (error) {
     const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString();
     return thunkAPI.rejectWithValue(message);
@@ -72,6 +92,24 @@ export const authSlice = createSlice({
           // something went wrong so setting user to null
           state.user = null;
       })
+      .addCase(signupWithGoogle.pending, (state) => {
+        // decide what to do with state while pending
+        state.isLoading = true;
+      })
+      .addCase(signupWithGoogle.fulfilled, (state, action) => {
+          state.isLoading = false;
+          state.isSuccess = true;
+          // payload gets returned up above in the signup function
+          state.user = action.payload;
+      })
+      .addCase(signupWithGoogle.rejected, (state, action) => {
+          state.isLoading = false;
+          state.isError = true;
+          // gets returned up above with the thunkAPI.rejectWithValue
+          state.message = action.payload;
+          // something went wrong so setting user to null
+          state.user = null;
+      })
       .addCase(signin.pending, (state) => {
           // decide what to do with state while pending
           state.isLoading = true;
@@ -90,9 +128,28 @@ export const authSlice = createSlice({
           // something went wrong so setting user to null
           state.user = null;
       })
+      .addCase(signinWithGoogle.pending, (state) => {
+        // decide what to do with state while pending
+        state.isLoading = true;
+      })
+      .addCase(signinWithGoogle.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        // payload gets returned up above in the signup function
+        state.user = action.payload;
+      })
+      .addCase(signinWithGoogle.rejected, (state, action) => {
+          state.isLoading = false;
+          state.isError = true;
+          // gets returned up above with the thunkAPI.rejectWithValue
+          state.message = action.payload;
+          // something went wrong so setting user to null
+          state.user = null;
+      })
       .addCase(signout.fulfilled, (state) => {
           state.user = null;
       })
+
   }
 });
 
