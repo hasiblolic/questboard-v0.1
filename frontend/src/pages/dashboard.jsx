@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { signout } from '../features/auth/auth-slice';
 
 import QuestForm from '../components/quests/quest-form';
-import Spinner from '../components/spinner';
 import DisplayQuests from '../components/quests/display-quests';
 import { toast } from 'react-toastify';
 
@@ -11,7 +11,7 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { user, isError, isLoading, message } = useSelector((state) => state.auth);
+  const { user, isError, message } = useSelector((state) => state.auth);
 
   useEffect(() => {
     if(isError) {
@@ -19,7 +19,7 @@ export default function Dashboard() {
     }
 
     if(!user) {
-      navigate('/login');
+      navigate('/signin');
     }
   }, [user, isError, navigate, message]);
 

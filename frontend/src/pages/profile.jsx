@@ -17,12 +17,12 @@ function Profile() {
       toast.error(message);
     }
    
-    // if no user is found - (no token) - go back to login because unauthorized
+    // if no user is found - (no token) - go back to signin because unauthorized
     if(!user) {
       navigate('/signin');
     }
 
-  }, [user, navigate]);
+  }, [user, isError, message, navigate]);
     
   // if the page is loading, display the loading spinner
   if(isLoading === true) return <Spinner />

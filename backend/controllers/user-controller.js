@@ -25,6 +25,11 @@ const signin = asyncHandler(async (req, res) => {
 
     const user = await User.findOne({ email });
 
+    if(!user) {
+      res.status(400);
+      throw new Error('This account could not be found. Please sign up to create a new account.')
+    }
+
     if(user && (await bcrypt.compare(password, user.password))) {
         res.json({
             _id: user.id,
@@ -53,7 +58,7 @@ const signinWithGoogle = asyncHandler(async (req, res) => {
     });
   } else {
     res.status(400);
-    throw new Error('Your acount could not be found, did you want to sign up?');
+    throw new Error('This account could not be found. Please sign up to create a new account.');
   }
 });
 

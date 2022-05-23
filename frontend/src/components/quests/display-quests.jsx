@@ -1,3 +1,4 @@
+import { Typography } from '@mui/material';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -21,7 +22,13 @@ export default function DisplayQuests() {
 
   if(isLoading === true) return <Spinner />
 
-  return (
-    <QuestTable data={quests} />
-  )
+  if(quests.length > 0) {
+    return (
+      <QuestTable data={quests} />
+    )
+  } else {
+    return (
+      <Typography variant='h5'>There are currently no quests to display</Typography>
+    )
+  }
 }

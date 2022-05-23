@@ -22,16 +22,16 @@ const pages = ['Products', 'Pricing', 'Blog'];
 const settings = [
   {
     name: 'Profile',
-    navigateTo: '/profile',
-  },
-  {
-    name: 'Sign Out',
-    navigateTo: '/signout',
+    navigationDestination: '/profile',
   },
   {
     name: 'Dashboard',
-    navigateTo: '/dashboard',
-  }
+    navigationDestination: '/dashboard',
+  },
+  {
+    name: 'Sign Out',
+    navigationDestination: '/signout',
+  },
 ]
 
 
@@ -51,11 +51,11 @@ export default function Header() {
     setAnchorElUser(event.currentTarget);
   };
 
-  const handleCloseNavMenu = (event) => {
+  const handleCloseNavMenu = () => {
     setAnchorElNav(null);
   };
 
-  const handleCloseUserMenu = (event) => {
+  const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
 
@@ -179,7 +179,7 @@ export default function Header() {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuSetting menuName={setting.name} />
+                <MenuSetting key={setting.name} navigationDestination={setting.navigationDestination} menuName={setting.name} />
               ))}
             </Menu>
           </Box>
