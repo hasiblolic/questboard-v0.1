@@ -1,7 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
-import { signout, reset } from '../../features/auth/auth-slice';
+import { useState } from 'react';
+import { useSelector } from 'react-redux';
 
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -19,26 +17,8 @@ import DeveloperBoardIcon from '@mui/icons-material/DeveloperBoard';
 import MenuSetting from './menu-setting';
 
 const pages = ['Products', 'Pricing', 'Blog'];
-const settings = [
-  {
-    name: 'Profile',
-    navigationDestination: '/profile',
-  },
-  {
-    name: 'Dashboard',
-    navigationDestination: '/dashboard',
-  },
-  {
-    name: 'Sign Out',
-    navigationDestination: '/signout',
-  },
-]
-
 
 export default function Header() {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-
   const { user } = useSelector((state) => state.auth);
 
   const [anchorElNav, setAnchorElNav] = useState(null);
@@ -58,12 +38,6 @@ export default function Header() {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
-
-  const onSignout = () => {
-    dispatch(signout());
-    dispatch(reset());
-    navigate('/signin');
-  }
 
   return (
     <AppBar position='static'>
@@ -159,7 +133,7 @@ export default function Header() {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt={user?.displayName} src='/' />
+                <Avatar alt={user?.displayName} src={user?.photoURL} />
               </IconButton>
             </Tooltip>
             <Menu
@@ -178,9 +152,20 @@ export default function Header() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => (
-                <MenuSetting key={setting.name} navigationDestination={setting.navigationDestination} menuName={setting.name} />
-              ))}
+              {/* Displaying certain buttons as options depending on user signed in or not */}
+              {user ? (
+                <Box>
+                  <MenuSetting navigationDestination='/profile' menuName='Profile' />
+                  <MenuSetting navigationDestination='/dashboard' menuName='Dashboard' />
+                  <MenuSetting navigationDestination='/signout' menuName='Sign Out' />
+                </Box>
+              ) : (
+                <Box>
+                  <MenuSetting navigationDestination='/signin' menuName='Sign In' />
+                  <MenuSetting navigationDestination='/signup' menuName='Sign Up' />
+                </Box>
+              )}
+              
             </Menu>
           </Box>
         </Toolbar>

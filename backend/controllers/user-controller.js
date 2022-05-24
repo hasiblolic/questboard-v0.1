@@ -35,6 +35,7 @@ const signin = asyncHandler(async (req, res) => {
             _id: user.id,
             displayName: user.displayName,
             email: user.email,
+            photoURL: user.photoURL,
             token: generateJWT(user._id),
         });
     } else {
@@ -54,6 +55,7 @@ const signinWithGoogle = asyncHandler(async (req, res) => {
       _id: user.id,
       displayName: user.displayName,
       email: user.email,
+      photoURL: user.photoURL,
       token: generateJWT(user._id),
     });
   } else {
@@ -157,6 +159,36 @@ const profile = asyncHandler(async (req, res) => {
     res.status(200).json(req.user)
 });
 
+// @desc    see user's specific information/profile
+// @route   GET /api/users/profile
+// @access  Private, because only the user should be able to see their information
+const updatePhoto = asyncHandler(async (req, res) => {
+  const { _id, photoURL } = req.body;
+
+  const update = {
+    photoURL: req.body.photoURL,
+  }
+
+  const prevUser = User.find({_id});
+
+  if(!prevUser) {
+    res.status(400);
+    throw new Error('User does not exist');
+  }
+
+  User.findOneAndUpdate({_id}, {
+    ...prevUser,
+    photoURL: photoURL,
+    }, (error, result) => {
+    if(error) {
+      res.status(400);
+      throw new Error('Something went wrong while updating user');
+    } else {
+      res.status(200).json(result);
+    }
+  });
+});
+
 // Generate JWT
 const generateJWT = (id) => {
     return jwt.sign(
@@ -171,5 +203,6 @@ module.exports = {
     signup,
     signinWithGoogle,
     signupWithGoogle,
-    profile
+    profile,
+    updatePhoto,
 };

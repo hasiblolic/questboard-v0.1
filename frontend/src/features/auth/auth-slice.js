@@ -12,6 +12,15 @@ const initialState = {
     message: '',
 }
 
+export const updateUserPhotoURL = createAsyncThunk('auth/update-photo', async (userData, thunkAPI) => {
+  try {
+    return await authService.signup(user);
+  } catch (error) {
+    const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString();
+    return thunkAPI.rejectWithValue(message);
+  }
+});
+
 // signup user
 export const signup = createAsyncThunk('auth/signup', async(user, thunkAPI) => {
   try {
@@ -149,7 +158,24 @@ export const authSlice = createSlice({
       .addCase(signout.fulfilled, (state) => {
           state.user = null;
       })
-
+      .addCase(updateUserPhotoURL.pending, (state) => {
+        // decide what to do with state while pending
+        state.isLoading = true;
+      })
+      .addCase(updateUserPhotoURL.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        // payload gets returned up above in the signup function
+        state.user = action.payload;
+      })
+      .addCase(updateUserPhotoURL.rejected, (state, action) => {
+          state.isLoading = false;
+          state.isError = true;
+          // gets returned up above with the thunkAPI.rejectWithValue
+          state.message = action.payload;
+          // something went wrong so setting user to null
+          state.user = null;
+      })
   }
 });
 
