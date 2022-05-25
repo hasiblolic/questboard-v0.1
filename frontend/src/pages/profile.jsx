@@ -2,14 +2,15 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { storage } from '../firebase';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
-import { v4 } from 'uuid'
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { v4 } from 'uuid';
 
 import Spinner from '../components/spinner';
 import { toast } from 'react-toastify';
-import { styled } from '@mui/material/styles'
+import { styled } from '@mui/material/styles';
 import { Box, Typography, Container, Grid, Stack, Button, IconButton, Fab } from '@mui/material';
-import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
+import ComputerIcon from '@mui/icons-material/Computer';
+import CameraIcon from '@mui/icons-material/CameraAltOutlined'
 import { updateUserPhotoURL } from '../features/auth/auth-slice';
 
 function Profile() {
@@ -71,24 +72,24 @@ function Profile() {
     display: 'none',
   });
 
+  const DisplayAvatar = () => {
+  }
+
   function UploadButtons() {
     return (
       <Stack direction="row" alignItems="center" spacing={2}>
-          <Input
-              accept="image/*"
-              id="contained-button-file"
-              multiple
-              type="file"
-              onChange={handleUploadPhoto}
-            />
-            <label htmlFor="contained-button-file">
-              <Fab component="span">
-                <AddPhotoAlternateIcon />
-              </Fab>
-            </label>
-        <Button variant="contained" component="span" onClick={uploadImage}>
-            Upload
-        </Button>
+        <Input
+          accept="image/*"
+          id="contained-button-file"
+          multiple
+          type="file"
+          onChange={handleUploadPhoto}
+        />
+        <label htmlFor="contained-button-file">
+            <Button component='span' variant='outlined' sx={{ textTransform: 'none' }} startIcon={<ComputerIcon />}>
+              <Typography sx={{ paddingLeft: 2}}>Upload from computer</Typography>
+            </Button>
+        </label>
       </Stack>
     )
   }
