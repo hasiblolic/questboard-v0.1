@@ -9,8 +9,7 @@ import Spinner from '../components/spinner';
 import { toast } from 'react-toastify';
 import { styled } from '@mui/material/styles'
 import { Box, Typography, Container, Grid, Stack, Button, IconButton, Fab } from '@mui/material';
-import PhotoCamera from '@mui/icons-material/PhotoCamera'
-import Photo from '@mui/icons-material/Photo'
+import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import { updateUserPhotoURL } from '../features/auth/auth-slice';
 
 function Profile() {
@@ -30,7 +29,7 @@ function Profile() {
       navigate('/signin');
     }
 
-  }, [user, isError, message, navigate]);
+  }, [user, dispatch, isError, message, navigate]);
     
   // if the page is loading, display the loading spinner
   if(isLoading === true) return <Spinner />
@@ -62,8 +61,10 @@ function Profile() {
 
   const handleUploadPhoto = (event) => {
     console.log('setting image');
+    console.log(event.target.files);
     console.log(event.target.files[0]);
     setImageUpload(event.target.files[0]);
+    console.log(event.target.files);
   }
 
   const Input = styled('input')({
@@ -73,11 +74,18 @@ function Profile() {
   function UploadButtons() {
     return (
       <Stack direction="row" alignItems="center" spacing={2}>
-          <Button variant="extended">
-            <Input accept="image/*" id="contained-button-file" type="file" onClick={handleUploadPhoto} />
-            <Photo sx={{ mr: 1 }} />
-            Choose Photo
-          </Button>
+          <Input
+              accept="image/*"
+              id="contained-button-file"
+              multiple
+              type="file"
+              onChange={handleUploadPhoto}
+            />
+            <label htmlFor="contained-button-file">
+              <Fab component="span">
+                <AddPhotoAlternateIcon />
+              </Fab>
+            </label>
         <Button variant="contained" component="span" onClick={uploadImage}>
             Upload
         </Button>
