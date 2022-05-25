@@ -159,15 +159,11 @@ const profile = asyncHandler(async (req, res) => {
     res.status(200).json(req.user)
 });
 
-// @desc    see user's specific information/profile
-// @route   GET /api/users/profile
-// @access  Private, because only the user should be able to see their information
+// @desc    update user's profile/avatar photo
+// @route   PATCH /api/users/update-photo
+// @access  Private, because only the user should be able to choose/update a photo
 const updatePhoto = asyncHandler(async (req, res) => {
   const { _id, photoURL } = req.body;
-
-  const update = {
-    photoURL: req.body.photoURL,
-  }
 
   const prevUser = User.find({_id});
 

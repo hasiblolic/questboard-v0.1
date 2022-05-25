@@ -8,12 +8,12 @@ import { v4 } from 'uuid';
 import Spinner from '../components/spinner';
 import { toast } from 'react-toastify';
 import { styled } from '@mui/material/styles';
-import { Box, Typography, Container, Grid, Stack, Button, IconButton, Fab } from '@mui/material';
+import { Box, Typography, Container, Grid, Stack, Button, Avatar } from '@mui/material';
 import ComputerIcon from '@mui/icons-material/Computer';
 import CameraIcon from '@mui/icons-material/CameraAltOutlined'
 import { updateUserPhotoURL } from '../features/auth/auth-slice';
 
-function Profile() {
+export default function Profile() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -41,10 +41,9 @@ function Profile() {
   const uploadImage = () => {
     // if no image has been selected, return
     if(imageUpload === null || imageUpload === undefined) return;
-    console.log(imageUpload);
 
     // reference to a spot in the firebase storage
-    const imageRef = ref(storage, `images/${user.displayName}/${imageUpload.name + v4()}`);
+    const imageRef = ref(storage, `images/${user.displayName}`);
 
     // upload to firebase and get back the image url
     // dispatching an action to update user's photoURL in database
@@ -56,43 +55,17 @@ function Profile() {
         }));
       })
     });
-
-    console.log('dispatched action');
   }
 
+  // will update the state with selected photo
   const handleUploadPhoto = (event) => {
-    console.log('setting image');
-    console.log(event.target.files);
-    console.log(event.target.files[0]);
     setImageUpload(event.target.files[0]);
-    console.log(event.target.files);
   }
 
+  // styiling for the input button - file select button
   const Input = styled('input')({
     display: 'none',
   });
-
-  const DisplayAvatar = () => {
-  }
-
-  function UploadButtons() {
-    return (
-      <Stack direction="row" alignItems="center" spacing={2}>
-        <Input
-          accept="image/*"
-          id="contained-button-file"
-          multiple
-          type="file"
-          onChange={handleUploadPhoto}
-        />
-        <label htmlFor="contained-button-file">
-            <Button component='span' variant='outlined' sx={{ textTransform: 'none' }} startIcon={<ComputerIcon />}>
-              <Typography sx={{ paddingLeft: 2}}>Upload from computer</Typography>
-            </Button>
-        </label>
-      </Stack>
-    )
-  }
   
   return (
     <Container component="main" maxWidth="xs">
@@ -105,19 +78,40 @@ function Profile() {
         }}
         >
           <Typography variant='h4'>Profile</Typography>
+
+          {/* Display Large Avatar */}
+          <Box>
+            <Avatar 
+              alt={user?.displayName}
+              src={user?.photoURL}
+              sx={{ width: 240, height: 240 }}
+            />
+          </Box>
+
+          {/* Buttons for uploading photos onto firebase */}
           <Box component="form" noValidate  sx={{ mt: 3 }}>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={12}>
-                {/* Buttons for uploading photos onto firebase */}
-                <UploadButtons />
+                <Stack direction="column" alignItems="center" spacing={2}>
+                  <Input
+                    accept="image/*"
+                    id="contained-button-file"
+                    multiple
+                    type="file"
+                    onChange={handleUploadPhoto}
+                  />
+                  <label htmlFor="contained-button-file">
+                    <Button component='span' variant='outlined' sx={{ textTransform: 'none' }} startIcon={<ComputerIcon />}>
+                      <Typography sx={{ paddingLeft: 2}}>Upload from computer</Typography>
+                    </Button>
+                  </label>
+
+                  <Button variant='contained' onClick={uploadImage}>Save Changes</Button>
+                </Stack>
               </Grid>
             </Grid>
           </Box>
-          
-          <Typography>Awesome!</Typography>
       </Box>
     </Container>
   )
 }
-
-export default Profile;

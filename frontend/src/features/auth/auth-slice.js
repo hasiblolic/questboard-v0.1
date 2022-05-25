@@ -14,7 +14,8 @@ const initialState = {
 
 export const updateUserPhotoURL = createAsyncThunk('auth/update-photo', async (userData, thunkAPI) => {
   try {
-    return await authService.signup(user);
+    console.log('sending request to service!');
+    return await authService.updateUserPhotoURL(userData);
   } catch (error) {
     const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString();
     return thunkAPI.rejectWithValue(message);

@@ -3,11 +3,18 @@ import axios from 'axios';
 const API_URL = 'http://localhost:8000/api/users';
 
 const updateUserPhotoURL = async (userData) => {
-  const response = await axios.put(API_URL + '/update-photo', userData);
+  console.log('received request from slice');
+  console.log('starting a patch request to server');
+  const response = await axios.patch(API_URL + '/update-photo', {
+    method: 'PATCH',
+    body: userData,
+    headers: { 'Content-type': 'application/json' }
+  })
+  console.log(response);
 
   // setting user data/token into local storage
   if(response.data) {
-    localStorage.setItem('user', JSON.stringify(response.data))
+    localStorage.setItem('user', JSON.stringify(response.data));
   }
 
   return response.data;
@@ -20,7 +27,7 @@ const signup = async (userData) => {
 
     // setting user data/token into local storage
     if(response.data) {
-        localStorage.setItem('user', JSON.stringify(response.data))
+        localStorage.setItem('user', JSON.stringify(response.data));
     }
 
     return response.data;
@@ -32,7 +39,7 @@ const signupWithGoogle = async (userData) => {
 
   // setting user data/token into local storage
   if(response.data) {
-      localStorage.setItem('user', JSON.stringify(response.data))
+      localStorage.setItem('user', JSON.stringify(response.data));
   }
 
   return response.data;
@@ -45,7 +52,7 @@ const signin = async (userData) => {
 
     // setting user data/token into local storage
     if(response.data) {
-        localStorage.setItem('user', JSON.stringify(response.data))
+        localStorage.setItem('user', JSON.stringify(response.data));
     }
     return response.data;
 }
@@ -57,7 +64,7 @@ const signinWithGoogle = async (userData) => {
 
   // setting user data/token into local storage
   if(response.data) {
-      localStorage.setItem('user', JSON.stringify(response.data))
+      localStorage.setItem('user', JSON.stringify(response.data));
   }
   return response.data;
 }
