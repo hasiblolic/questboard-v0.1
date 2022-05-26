@@ -43,7 +43,7 @@ export default function Profile() {
     if(imageUpload === null || imageUpload === undefined) return;
 
     // reference to a spot in the firebase storage
-    const imageRef = ref(storage, `images/${user.displayName}`);
+    const imageRef = ref(storage, `images/${user._id}`);
 
     // upload to firebase and get back the image url
     // dispatching an action to update user's photoURL in database

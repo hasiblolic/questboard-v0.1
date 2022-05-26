@@ -3,13 +3,10 @@ import axios from 'axios';
 const API_URL = 'http://localhost:8000/api/users';
 
 const updateUserPhotoURL = async (userData) => {
-  console.log('received request from slice');
-  console.log('starting a patch request to server');
-  const response = await axios.patch(API_URL + '/update-photo', {
-    method: 'PATCH',
-    body: userData,
-    headers: { 'Content-type': 'application/json' }
-  })
+  console.log('hello');
+  console.log(API_URL + '/update-photo');
+  console.log(userData);
+  const response = await axios.post(API_URL + '/update/photo', userData);
   console.log(response);
 
   // setting user data/token into local storage

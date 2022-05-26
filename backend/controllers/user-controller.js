@@ -9,39 +9,39 @@ const User = require('../models/user-model');
 // @route   POST /api/users/signin
 // @access  Public
 const signin = asyncHandler(async (req, res) => {
-    // pulling out email and password from request
-    const { email, password } = req.body;
+  // pulling out email and password from request
+  const { email, password } = req.body;
 
-    // doing some validation
-    if(!email) {
-        res.status(400);
-        throw new Error('Please enter your email');
-    }
-
-    if(!password) {
+  // doing some validation
+  if(!email) {
       res.status(400);
-      throw new Error('Please enter your password');
-    }
+      throw new Error('Please enter your email');
+  }
 
-    const user = await User.findOne({ email });
+  if(!password) {
+    res.status(400);
+    throw new Error('Please enter your password');
+  }
 
-    if(!user) {
+  const user = await User.findOne({ email });
+
+  if(!user) {
+    res.status(400);
+    throw new Error('This account could not be found. Please sign up to create a new account.')
+  }
+
+  if(user && (await bcrypt.compare(password, user.password))) {
+      res.status(201).json({
+          _id: user.id,
+          displayName: user.displayName,
+          email: user.email,
+          photoURL: user.photoURL,
+          token: generateJWT(user._id),
+      });
+  } else {
       res.status(400);
-      throw new Error('This account could not be found. Please sign up to create a new account.')
-    }
-
-    if(user && (await bcrypt.compare(password, user.password))) {
-        res.json({
-            _id: user.id,
-            displayName: user.displayName,
-            email: user.email,
-            photoURL: user.photoURL,
-            token: generateJWT(user._id),
-        });
-    } else {
-        res.status(400);
-        throw new Error('Invalid credentials');
-    }
+      throw new Error('Invalid credentials');
+  }
 });
 
 const signinWithGoogle = asyncHandler(async (req, res) => {
@@ -51,7 +51,7 @@ const signinWithGoogle = asyncHandler(async (req, res) => {
   const user = await User.findOne({ email });
 
   if(user) {
-    res.json({
+    res.status(201).json({
       _id: user.id,
       displayName: user.displayName,
       email: user.email,
@@ -69,46 +69,46 @@ const signinWithGoogle = asyncHandler(async (req, res) => {
 // @route   POST /api/users/signup
 // @access  Public
 const signup = asyncHandler(async (req, res) => {
-    const { email, password, displayName } = req.body;
+  const { email, password, displayName } = req.body;
 
-    // validate that all fields are filled out
-    if(!email || !password) {
-        res.status(400);
-        throw new Error('Please enter all fields');
-    }
+  // validate that all fields are filled out
+  if(!email || !password) {
+    res.status(400);
+    throw new Error('Please enter all fields');
+  }
 
-    // check if user exists already
-    const userExists = await User.findOne({ email });
+  // check if user exists already
+  const userExists = await User.findOne({ email });
 
-    if(userExists) {
-        res.status(400);
-        throw new Error('User already registered, did you want to sign in?');
-    }
+  if(userExists) {
+    res.status(400);
+    throw new Error('User already registered, did you want to sign in?');
+  }
 
-    // user not found and all fields filled out so go ahead and create a new user
-    // starting by hashing password - create salt first
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+  // user not found and all fields filled out so go ahead and create a new user
+  // starting by hashing password - create salt first
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(password, salt);
 
-    // create user
-    const user = await User.create({
-        displayName,
-        email,
-        password: hashedPassword,
+  // create user
+  const user = await User.create({
+    displayName,
+    email,
+    password: hashedPassword,
+  });
+
+  // verify user was successfully created and respond with 201
+  if(user) {
+    res.status(201).json({
+      _id: user.id,
+      displayName: user.displayName,
+      email: user.email,
+      token: generateJWT(user._id)
     });
-
-    // verify user was successfully created and respond with 201
-    if(user) {
-        res.status(201).json({
-            _id: user.id,
-            displayName: user.displayName,
-            email: user.email,
-            token: generateJWT(user._id)
-        });
-    } else {
-        res.status(400);
-        throw new Error('Invalid user data');
-    }
+  } else {
+    res.status(400);
+    throw new Error('Invalid user data');
+  }
 });
 
 // @desc    create a new user
@@ -119,36 +119,36 @@ const signupWithGoogle = asyncHandler(async (req, res) => {
 
   // validate that all fields are filled out
   if(!email) {
-      res.status(400);
-      throw new Error('Missing email');
+    res.status(400);
+    throw new Error('Missing email');
   }
 
   // check if user exists already
   const userExists = await User.findOne({ email });
 
   if(userExists) {
-      res.status(400);
-      throw new Error('User already registered, did you want to sign in?');
+    res.status(400);
+    throw new Error('User already registered, did you want to sign in?');
   }
 
   // existing user not found and all fields filled out so go ahead and create a new user
   // create user
   const user = await User.create({
-      displayName,
-      email,
+    displayName,
+    email,
   });
 
   // verify user was successfully created and respond with 201
   if(user) {
-      res.status(201).json({
-          _id: user.id,
-          displayName: user.displayName,
-          email: user.email,
-          token: generateJWT(user._id)
-      });
+    res.status(201).json({
+      _id: user.id,
+      displayName: user.displayName,
+      email: user.email,
+      token: generateJWT(user._id)
+    });
   } else {
-      res.status(400);
-      throw new Error('Invalid user data');
+    res.status(400);
+    throw new Error('Invalid user data');
   }
 });
 
@@ -156,49 +156,47 @@ const signupWithGoogle = asyncHandler(async (req, res) => {
 // @route   GET /api/users/profile
 // @access  Private, because only the user should be able to see their information
 const profile = asyncHandler(async (req, res) => {
-    res.status(200).json(req.user)
+  res.status(200).json(req.user)
 });
 
 // @desc    update user's profile/avatar photo
-// @route   PATCH /api/users/update-photo
+// @route   PUT /api/users/update-photo
 // @access  Private, because only the user should be able to choose/update a photo
 const updatePhoto = asyncHandler(async (req, res) => {
   const { _id, photoURL } = req.body;
 
-  const prevUser = User.find({_id});
-
-  if(!prevUser) {
+  if(!req.user) {
     res.status(400);
-    throw new Error('User does not exist');
+    throw new Error('Unauthorized');
   }
 
-  User.findOneAndUpdate({_id}, {
-    ...prevUser,
+  const newUser = await User.findOneAndUpdate({_id}, {
+    ...req.user,
     photoURL: photoURL,
-    }, (error, result) => {
-    if(error) {
-      res.status(400);
-      throw new Error('Something went wrong while updating user');
-    } else {
-      res.status(200).json(result);
-    }
   });
+
+  if(!newUser) {
+    res.status(400);
+    throw new Error('User not found or unauthorized');
+  }
+
+  res.status(200).json(newUser);
 });
 
 // Generate JWT
 const generateJWT = (id) => {
-    return jwt.sign(
-        { id }, 
-        process.env.JWT_SECRET,
-        { expiresIn: '30d' }
-    )
+  return jwt.sign(
+    { id }, 
+    process.env.JWT_SECRET,
+    { expiresIn: '30d' }
+  )
 }
 
 module.exports = {
-    signin,
-    signup,
-    signinWithGoogle,
-    signupWithGoogle,
-    profile,
-    updatePhoto,
+  signin,
+  signup,
+  signinWithGoogle,
+  signupWithGoogle,
+  profile,
+  updatePhoto,
 };
