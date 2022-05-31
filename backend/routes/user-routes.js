@@ -18,7 +18,7 @@ router.post('/signin', signin);
 router.post('/signin-with-google', signinWithGoogle);
 router.post('/signup', signup);
 router.post('/signup-with-google', signupWithGoogle);
-router.post('/update/photo', protect, updatePhoto);
+router.put('/profile/photo/:id', protect, updatePhoto);
 router.get('/profile', protect, profile);
 
 module.exports = router;

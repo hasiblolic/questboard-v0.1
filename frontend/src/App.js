@@ -10,19 +10,25 @@ import Signup from './pages/sign-up';
 import Profile from './pages/profile';
 import AppBar from './components/app-bar/app-bar';
 import { Box } from '@mui/material';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import Landing from './pages/landing';
 import SignOut from './pages/sign-out';
+import { getUserProfile } from './features/user/user-slice';
 
 function App() {
-  const { isError, message } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const { userToken, isError, message } = useSelector((state) => state.auth);
+  const { user } = useSelector((state) => state.user);
 
   useEffect(() => {
     if (isError) {
-      toast.error(message);
+      return () => { toast.error(message); }
     }
-
+    
+    if(!user) {
+      return () => { dispatch(getUserProfile()); }
+    }
   }, [isError, message]);
 
   return (
@@ -34,8 +40,8 @@ function App() {
           <Route path='/signin' element={<Signin />} />
           <Route path='/signup' element={<Signup />} />
           <Route path='/signout' element={<SignOut />} />
-          <Route path='/dashboard' element={<Dashboard />} />
-          <Route path='/profile' element={<Profile />} />
+          {userToken && (<Route path='/dashboard' element={<Dashboard />} />) }
+          {userToken && (<Route path='/profile' element={<Profile />} />) }
         </Routes>
       </Router>
       <ToastContainer />

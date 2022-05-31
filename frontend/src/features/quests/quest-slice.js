@@ -12,7 +12,7 @@ const initialState = {
 // create new quest
 export const createQuest = createAsyncThunk('quests/create', async(quest, thunkAPI) => {
   try {
-    const token = thunkAPI.getState().auth.user.token;
+    const token = thunkAPI.getState().auth.userToken;
     return await questService.createQuest(quest, token);
   } catch (error) {
     const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString();
@@ -22,7 +22,7 @@ export const createQuest = createAsyncThunk('quests/create', async(quest, thunkA
 
 export const getQuests = createAsyncThunk('quests/get', async(_, thunkAPI) => {
   try {
-    const token = thunkAPI.getState().auth.user.token;
+    const token = thunkAPI.getState().auth.userToken;
     return await questService.getQuests(token);
   } catch (error) {
     const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString();
@@ -32,7 +32,7 @@ export const getQuests = createAsyncThunk('quests/get', async(_, thunkAPI) => {
 
 export const updateQuest = createAsyncThunk('quests/update', async(updatedQuest, thunkAPI) => {
   try {
-    const token = thunkAPI.getState().auth.user.token;
+    const token = thunkAPI.getState().auth.userToken;
     return await questService.updateQuest(updatedQuest, token);
   } catch (error) {
     const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString();
@@ -42,7 +42,7 @@ export const updateQuest = createAsyncThunk('quests/update', async(updatedQuest,
 
 export const deleteQuest = createAsyncThunk('quests/delete', async(id, thunkAPI) => {
   try {
-    const token = thunkAPI.getState().auth.user.token;
+    const token = thunkAPI.getState().auth.userToken;
     return await questService.deleteQuest(id, token);
   } catch (error) {
     const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString();

@@ -2,13 +2,11 @@ import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { signin, reset, signinWithGoogle } from '../features/auth/auth-slice';
+import { reset, authUser } from '../features/auth/auth-slice';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -18,7 +16,7 @@ import Container from '@mui/material/Container';
 import GoogleIcon from '@mui/icons-material/Google'
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { auth, provider } from '../firebase';
-import { signInWithPopup, GoogleAuthProvider, signInWithRedirect } from 'firebase/auth';
+import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 
 function Copyright(props) {
   return (
@@ -68,8 +66,13 @@ export default function SignIn() {
         const token = credential.accessToken;
         // The signed-in user info.
         const user = result.user;
+
+        const userData = {
+          user: user,
+          endPoint: 'signin-with-google',
+        }
         // ...
-        dispatch(signinWithGoogle(user));
+        dispatch(authUser(userData));
       }).catch((error) => {
         // Handle Errors here.
         const errorCode = error.code;
@@ -82,14 +85,17 @@ export default function SignIn() {
       });
   }
 
-
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    dispatch(signin({
-      email: data.get('email'),
-      password: data.get('password'),
-    }));
+    const userData = {
+      user: {
+        email: data.get('email'),
+        password: data.get('password'),
+      },
+      endPoint: 'signin',
+    }
+    dispatch(authUser(userData));
   };
 
   return (

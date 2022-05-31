@@ -19,7 +19,9 @@ import MenuSetting from './menu-setting';
 const pages = ['Products', 'Pricing', 'Blog'];
 
 export default function Header() {
-  const { user } = useSelector((state) => state.auth);
+  const { user } = useSelector((state) => state.user);
+
+  
 
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);

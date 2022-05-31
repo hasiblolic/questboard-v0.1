@@ -1,14 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { signup, reset, signupWithGoogle } from '../features/auth/auth-slice';
+import { authUser, reset } from '../features/auth/auth-slice';
 import Spinner from '../components/spinner';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import GoogleIcon from '@mui/icons-material/Google';
 import { Avatar, Box, Button, Container, createTheme, CssBaseline, Grid, Link, TextField, ThemeProvider, Typography } from '@mui/material';
 import { auth, provider } from '../firebase';
-import { GoogleAuthProvider, signInWithPopup, signInWithRedirect } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 
 function Copyright(props) {
   return (
@@ -26,21 +26,12 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function Signup() {
-  const [formData, setFormData] = useState({
-    displayName: '',
-    email: '',
-    password: '',
-    password2: '',
-  })
-
-  const { displayName, email, password, password2 } = formData
-
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const { user, isLoading, isError, isSuccess, message } = useSelector(
     (state) => state.auth
-  )
+  );
 
   useEffect(() => {
     if (isError) {
@@ -52,23 +43,26 @@ export default function Signup() {
     }
 
     dispatch(reset())
-  }, [user, isError, isSuccess, message, navigate, dispatch])
+  }, [user, isError, isSuccess, message, navigate, dispatch]);
 
   const handleSubmit = (event) => {
     event.preventDefault()
+    const data = new FormData(event.currentTarget);
 
-    if (password !== password2) {
-      toast.error('Passwords do not match')
+    if (data.get('password') !== data.get('password2')) {
+      toast.error('Passwords do not match');
     } else {
-      const data = new FormData(event.currentTarget);
-      
-      dispatch(signup({
-        displayName: data.get('displayName'),
-        email: data.get('email'),
-        password: data.get('password'),
-      }))
+      const userData = {
+        user: {
+          displayName: data.get('displayName'),
+          email: data.get('email'),
+          password: data.get('password'),
+        },
+        endPoint: 'signup',
+      }
+      dispatch(authUser(userData));
     }
-  }
+  };
 
   const googleAuth = () => {
     signInWithPopup(auth, provider)
@@ -78,8 +72,13 @@ export default function Signup() {
         const token = credential.accessToken;
         // The signed-in user info.
         const user = result.user;
+
+        const userData = {
+          user: user,
+          endPoint: 'signup-with-google',
+        }
         // ...
-        dispatch(signupWithGoogle(user));
+        dispatch(authUser(userData));
       }).catch((error) => {
         // Handle Errors here.
         const errorCode = error.code;

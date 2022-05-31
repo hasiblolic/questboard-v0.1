@@ -45,6 +45,7 @@ const signin = asyncHandler(async (req, res) => {
 });
 
 const signinWithGoogle = asyncHandler(async (req, res) => {
+  console.log('signing in with google');
   // pulling out email and password from request
   const { email } = req.body;
 
@@ -156,28 +157,32 @@ const signupWithGoogle = asyncHandler(async (req, res) => {
 // @route   GET /api/users/profile
 // @access  Private, because only the user should be able to see their information
 const profile = asyncHandler(async (req, res) => {
-  res.status(200).json(req.user)
-});
-
-// @desc    update user's profile/avatar photo
-// @route   PUT /api/users/update-photo
-// @access  Private, because only the user should be able to choose/update a photo
-const updatePhoto = asyncHandler(async (req, res) => {
-  const { _id, photoURL } = req.body;
-
   if(!req.user) {
     res.status(400);
     throw new Error('Unauthorized');
   }
+  res.status(200).json(req.user);
+});
 
-  const newUser = await User.findOneAndUpdate({_id}, {
-    ...req.user,
-    photoURL: photoURL,
-  });
+// @desc    update user's profile/avatar photo
+// @route   PUT /api/users/update/photo
+// @access  Private, because only the user should be able to choose/update a photo
+const updatePhoto = asyncHandler(async (req, res) => {
+  if(!req.body || !req.params.id) {
+    res.status(400);
+    throw new Error('Bad request');
+  }
+  
+  if(!req.user || req.user.id !== req.params.id) {
+    res.status(400);
+    throw new Error('Params do not match user id or unauthorized');
+  }
+
+  const newUser = await User.findByIdAndUpdate(req.params.id, {photoURL: req.body.photoURL}, {new: true});
 
   if(!newUser) {
     res.status(400);
-    throw new Error('User not found or unauthorized');
+    throw new Error('There was an error updating the user');
   }
 
   res.status(200).json(newUser);

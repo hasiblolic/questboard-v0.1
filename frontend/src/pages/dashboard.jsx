@@ -1,49 +1,37 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-
-import QuestForm from '../components/quests/quest-form';
-import DisplayQuests from '../components/quests/display-quests';
+import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
+import { getQuests } from '../features/quests/quest-slice';
+import QuestForm from '../components/quests/quest-form';
 import Spinner from '../components/spinner';
+import QuestTable from '../components/quests/quest-table';
+import { Box, Container, Typography } from '@mui/material';
 
 export default function Dashboard() {
   const navigate = useNavigate();
-
-  const { user, isLoading, isError, message } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const questState = useSelector((state) => state.quests);
 
   useEffect(() => {
-    if(isError) {
-      toast.error(message);
-    }
-   
-    // if no user is found - (no token) - go back to signin because unauthorized
-    if(!user) {
-      navigate('/signin');
-    }
+    if(questState.isError) toast.error(questState.message);
 
-  }, [user, isError, message, navigate]);
+    if(questState.quests.length === 0) return () => { dispatch(getQuests()); }
+  }, [questState.quests, questState.isError, questState.message, dispatch, navigate]);
 
   // if the page is loading, display the loading spinner
-  if(isLoading === true) return <Spinner />
-
-  // if no user is found, there is no reason to render anything
-  if(!user) return;
+  if(questState.isLoading === true) return <Spinner />
 
   return (
-    <>
-      <section className='text-center'>
-        <p>Create some quests!</p>
-      </section>
-
+    <Container component='main'>
       <QuestForm />
 
-      <hr/>
-
-      <section className='content'>
-        <h3>Quests</h3>
-        <DisplayQuests />
-      </section>
-    </>
+      <Box>
+        <Typography variant='h6' sx={{ textAlign: 'center' }}>Quests</Typography>
+        {questState.quests.length > 0
+        ? (<QuestTable data={questState.quests} />)
+        : (<Typography variant='h5'>There are currently no quests to display</Typography>)}
+      </Box>
+    </Container>
   );
 }

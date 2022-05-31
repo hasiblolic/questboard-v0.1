@@ -20,7 +20,7 @@ router.route('/')
 // routes for deleting and updating quests based on id entered as param
 router.route('/:id')
     .put(protect, updateQuest)
-    .delete(protect, deleteQuest)
+    .delete(protect, deleteQuest);
 
 
 module.exports = router;
