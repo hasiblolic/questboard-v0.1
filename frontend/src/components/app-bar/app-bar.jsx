@@ -67,7 +67,7 @@ export default function Header() {
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' }}}>
             <IconButton
               size='large'
-              aria-label='account of current user'
+              aria-label='menu-button'
               aria-controls='menu-appbar'
               aria-haspopup='true'
               onClick={handleOpenNavMenu}
@@ -101,10 +101,10 @@ export default function Header() {
             </Menu>
           </Box>
 
-          {/* Brand Logo for smaller screens */}
+          {/* Brand Logo */}
           <DeveloperBoardIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
           <Typography
-            variant="h5"
+            variant="h6"
             noWrap
             component="a"
             href=""

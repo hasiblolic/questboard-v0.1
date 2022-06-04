@@ -1,10 +1,15 @@
 const mongoose = require('mongoose');
 
 const questSchema = mongoose.Schema({
-    user: {
+    creator: {
         type: mongoose.Schema.Types.ObjectId,
-        required: true,
+        required: [true, 'Must be signed in to create a quest'],
         ref: 'User',
+    },
+    assignedTo: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: false,
+      ref: 'User',
     },
     title: {
         type: String,

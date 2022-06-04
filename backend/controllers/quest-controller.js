@@ -28,9 +28,10 @@ const getQuests = asyncHandler(async (req, res) => {
 const createQuest = asyncHandler(async (req, res) => {
   const quest = await Quest.create({
     title: req.body.title,
-    user: req.user.id,
+    creator: req.user.id,
     due: req.body.due,
     description: req.body.description,
+    assignedTo: req.body.assignedTo,
   });
 
   res.status(200).json(quest);
@@ -56,7 +57,7 @@ const updateQuest = asyncHandler(async (req, res) => {
   }
 
   // ensuring user matches quest creator
-  if(quest.user.toString() !== user.id) {
+  if(quest.creator.toString() !== user.id) {
     res.status(401);
     throw new Error('User not authorized');
   }
@@ -79,7 +80,7 @@ const deleteQuest = asyncHandler(async (req, res) => {
   }
 
   // ensuring user matches quest creator
-  if(quest.user.toString() !== user.id) {
+  if(quest.creator.toString() !== user.id) {
     res.status(401);
     throw new Error('User not authorized');
   }
