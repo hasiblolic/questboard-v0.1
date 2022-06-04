@@ -5,6 +5,7 @@ import Spinner from '../components/spinner';
 import { toast } from 'react-toastify';
 import { Grid } from '@mui/material';
 import ProfileTabs from '../components/profile/profile-tabs';
+import ProfileBio from '../components/profile/profile-bio';
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -38,6 +39,9 @@ export default function Profile() {
       <Grid container spacing={2} sx={{ mt: 1, p: 1 }}>
         <Grid item xs={12}>
           <ProfileTabs />
+        </Grid>
+        <Grid item xs={12}>
+          <ProfileBio />
         </Grid>
       </Grid>
   );
